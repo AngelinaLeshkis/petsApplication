@@ -1,11 +1,12 @@
 package com.example.petsapplication.service;
 
-import com.example.petsapplication.pojo.AuthenticationInfo;
-import org.springframework.http.ResponseEntity;
-
-import java.util.List;
+import com.example.petsapplication.dto.GeneralResponseDTO;
+import com.example.petsapplication.dto.PostRequestDTO;
 
 public interface GeneralService {
 
-    ResponseEntity<List> getAll(AuthenticationInfo authenticationInfo);
+    GeneralResponseDTO getAll();
+
+    PostRequestDTO save(PostRequestDTO postRequestDTO);
 }
+

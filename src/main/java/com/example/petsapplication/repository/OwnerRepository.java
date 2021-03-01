@@ -1,36 +1,16 @@
 package com.example.petsapplication.repository;
 
 import com.example.petsapplication.entity.Owner;
-import com.example.petsapplication.pojo.AuthenticationInfo;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Optional;
 
-import static org.springframework.http.HttpMethod.GET;
+public interface OwnerRepository {
 
-@Component
-@RequiredArgsConstructor
-public class OwnerRepository {
+    List<Owner> findAll();
 
-    @Value("${backend.server.url}")
-    private String backendServerUrl;
-    private final RestTemplate restTemplate;
+    Optional<Owner> save(Owner owner);
 
-    public ResponseEntity<List> findAll(AuthenticationInfo authenticationInfo) {
-        return restTemplate.exchange
-                (backendServerUrl + "owners", GET, new HttpEntity<Owner>(createHeaders(authenticationInfo)), List.class);
-    }
+    void delete(long id);
 
-    private HttpHeaders createHeaders(AuthenticationInfo authenticationInfo ) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        String authInformation = authenticationInfo.getAuthenticationInfo();
-        httpHeaders.set("Authorization", authInformation);
-        return httpHeaders;
-    }
 }

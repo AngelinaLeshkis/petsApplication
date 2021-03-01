@@ -1,37 +1,17 @@
 package com.example.petsapplication.repository;
 
+import com.example.petsapplication.dto.CreateCatDTO;
 import com.example.petsapplication.entity.Cat;
 import com.example.petsapplication.entity.Owner;
-import com.example.petsapplication.pojo.AuthenticationInfo;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Optional;
 
-import static org.springframework.http.HttpMethod.GET;
+public interface CatRepository {
 
-@Component
-@RequiredArgsConstructor
-public class CatRepository {
+    List<Cat> findAll();
 
-    @Value("${backend.server.url}")
-    private String backendServerUrl;
-    private final RestTemplate restTemplate;
+    Optional<CreateCatDTO> save(CreateCatDTO catDTO, Owner owner);
 
-    public ResponseEntity<List> findAll(AuthenticationInfo authenticationInfo) {
-        return restTemplate.exchange
-                (backendServerUrl + "cats", GET, new HttpEntity<Cat>(createHeaders(authenticationInfo)), List.class);
-    }
-
-    private HttpHeaders createHeaders(AuthenticationInfo authenticationInfo ) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        String authInformation = authenticationInfo.getAuthenticationInfo();
-        httpHeaders.set("Authorization", authInformation);
-        return httpHeaders;
-    }
+    void delete(long id);
 }

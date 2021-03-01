@@ -22,4 +22,5 @@ public class Cat extends Pet {
         super(id, name, age, owner);
         this.view = view;
     }
+
 }
