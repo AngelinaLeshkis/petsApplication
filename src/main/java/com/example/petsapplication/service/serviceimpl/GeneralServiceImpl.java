@@ -42,7 +42,7 @@ public class GeneralServiceImpl implements GeneralService {
         CreateDogDTO savedDog = dogRepository.save(postRequestDTO.getDog(), savedOwner)
                 .orElseThrow(() -> {
                     ownerRepository.delete(savedOwner.getId());
-                    return new EntityNotFoundException(Dog.class);
+                    throw new EntityNotFoundException(Dog.class);
                 });
 
         CreateCatDTO savedCat = catRepository.save(postRequestDTO.getCat(), savedOwner)
@@ -50,7 +50,7 @@ public class GeneralServiceImpl implements GeneralService {
                     Dog dog = toDog(savedDog, savedOwner);
                     ownerRepository.delete(savedOwner.getId());
                     dogRepository.delete(dog.getId());
-                    return new EntityNotFoundException(Cat.class);
+                    throw new EntityNotFoundException(Cat.class);
                 });
 
         return PostRequestDTO.builder()
