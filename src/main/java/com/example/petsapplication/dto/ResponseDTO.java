@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ResponseDTO {
 
-    private Owner owner;
-    private Cat cat;
-    private Dog dog;
+    private OwnerDTO owner;
+    private CatDTO cat;
+    private DogDTO dog;
 }

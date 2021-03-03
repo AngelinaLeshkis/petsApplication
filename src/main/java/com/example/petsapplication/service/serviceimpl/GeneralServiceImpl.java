@@ -18,6 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.petsapplication.mapper.OwnerMapper.toOwnerDTO;
+import static com.example.petsapplication.mapper.PetMapper.toCatDto;
+import static com.example.petsapplication.mapper.PetMapper.toDogDto;
 import static com.example.petsapplication.mapper.ResponseMapper.toGeneralResponseDTO;
 import static com.example.petsapplication.mapper.ResponseMapper.toResponseDTO;
 import static org.springframework.http.HttpStatus.CREATED;
@@ -45,16 +48,16 @@ public class GeneralServiceImpl implements GeneralService {
 
         List<Object> createdEntities = new ArrayList<>();
         for (Map.Entry<Object, HttpStatus> entry : getMapOfEntities().entrySet()) {
-            while (entry.getValue().equals(CREATED)) {
+            while (entry.getValue().equals(CREATED) && createdEntities.size() < 3) {
                 createdEntities.add(entry.getKey());
+                }
             }
-        }
 
-        if (createdEntities.size() != 3) {
+        if (createdEntities.size() < 3) {
             delete(createdEntities);
         }
 
-        return toResponseDTO(savedOwner, savedDog, savedCat);
+        return toResponseDTO(toOwnerDTO(savedOwner), toDogDto(savedDog), toCatDto(savedCat));
     }
 
     private void delete(List<Object> createdEntities) {
