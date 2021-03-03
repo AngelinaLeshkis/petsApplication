@@ -1,20 +1,24 @@
 package com.example.petsapplication.repository.repositoryimpl;
 
+import com.example.petsapplication.dto.CreateOwnerDTO;
 import com.example.petsapplication.entity.Owner;
+import com.example.petsapplication.pojo.AuthenticationInfo;
 import com.example.petsapplication.repository.OwnerRepository;
-import com.example.petsapplication.service.HttpHeadersService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
-import java.util.Optional;
 
-import static org.springframework.http.HttpMethod.DELETE;
+import static com.example.petsapplication.mapper.OwnerMapper.toOwner;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
+import static utils.CheckEntityExistence.setMapOfEntities;
+import static utils.HttpHeaderUtil.createHeaders;
 
 
 @Repository
@@ -26,26 +30,30 @@ public class OwnerRepositoryImpl implements OwnerRepository {
     @Value("${owners.url}")
     private final String ownersUrl;
     private final RestTemplate restTemplate;
-    private final HttpHeadersService httpHeadersService;
+    private final AuthenticationInfo authenticationInfo;
 
     @Override
     public List<Owner> findAll() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        HttpEntity<Owner> httpEntity = new HttpEntity<>(createHeaders(httpHeaders, authenticationInfo.getAuthenticationInfo()));
         List<Owner> owners = restTemplate.exchange
-                (backendServerUrl + ownersUrl, GET,
-                        new HttpEntity<Owner>(httpHeadersService.createHeaders()), List.class).getBody();
+                (backendServerUrl + ownersUrl, GET, httpEntity, List.class).getBody();
         return owners;
     }
 
     @Override
-    public Optional<Owner> save(Owner owner) {
-        Owner savedOwner = restTemplate.exchange(backendServerUrl + ownersUrl, POST,
-                new HttpEntity<>(owner, httpHeadersService.createHeaders()), Owner.class).getBody();
-        return Optional.ofNullable(savedOwner);
+    public Owner save(CreateOwnerDTO owner) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        HttpEntity<Owner> httpEntity = new HttpEntity<>(toOwner(owner), createHeaders(httpHeaders, authenticationInfo.getAuthenticationInfo()));
+        ResponseEntity<Owner> savedOwner = restTemplate.exchange(backendServerUrl + ownersUrl, POST,
+                httpEntity, Owner.class);
+        setMapOfEntities(savedOwner.getBody(), savedOwner.getStatusCode());
+        return savedOwner.getBody();
     }
 
     @Override
     public void delete(long id) {
-        restTemplate.exchange(backendServerUrl + ownersUrl + "/" + id, DELETE,
-                new HttpEntity<>(httpHeadersService.createHeaders()), Owner.class);
+//        restTemplate.exchange(backendServerUrl + ownersUrl + "/" + id, DELETE,
+//                new HttpEntity<>(httpHeadersService.createHeaders()), Owner.class);
     }
 }

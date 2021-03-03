@@ -1,5 +1,6 @@
 package com.example.petsapplication.mapper;
 
+import com.example.petsapplication.dto.CreateOwnerDTO;
 import com.example.petsapplication.dto.OwnerDTO;
 import com.example.petsapplication.entity.Owner;
 import lombok.NoArgsConstructor;
@@ -16,9 +17,8 @@ public final class OwnerMapper {
                 .build();
     }
 
-    public static Owner toOwner(OwnerDTO ownerDTO) {
+    public static Owner toOwner(CreateOwnerDTO ownerDTO) {
         return Owner.ownerBuilder()
-                .id(ownerDTO.getId())
                 .name(ownerDTO.getName())
                 .build();
     }

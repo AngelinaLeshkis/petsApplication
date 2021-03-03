@@ -1,6 +1,7 @@
 package com.example.petsapplication.mapper;
 
 import com.example.petsapplication.dto.GeneralResponseDTO;
+import com.example.petsapplication.dto.ResponseDTO;
 import com.example.petsapplication.entity.Cat;
 import com.example.petsapplication.entity.Dog;
 import com.example.petsapplication.entity.Owner;
@@ -19,6 +20,14 @@ public final class ResponseMapper {
                 .owners(owners)
                 .cats(cats)
                 .dogs(dogs)
+                .build();
+    }
+
+    public static ResponseDTO toResponseDTO(Owner owner, Dog dog, Cat cat) {
+        return ResponseDTO.builder()
+                .owner(owner)
+                .dog(dog)
+                .cat(cat)
                 .build();
     }
 }

@@ -1,24 +1,27 @@
 package com.example.petsapplication.service.serviceimpl;
 
-import com.example.petsapplication.dto.CreateCatDTO;
-import com.example.petsapplication.dto.CreateDogDTO;
 import com.example.petsapplication.dto.GeneralResponseDTO;
 import com.example.petsapplication.dto.PostRequestDTO;
+import com.example.petsapplication.dto.ResponseDTO;
 import com.example.petsapplication.entity.Cat;
 import com.example.petsapplication.entity.Dog;
 import com.example.petsapplication.entity.Owner;
-import com.example.petsapplication.exception.EntityNotFoundException;
 import com.example.petsapplication.repository.CatRepository;
 import com.example.petsapplication.repository.DogRepository;
 import com.example.petsapplication.repository.OwnerRepository;
 import com.example.petsapplication.service.GeneralService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import static com.example.petsapplication.mapper.OwnerMapper.toOwner;
-import static com.example.petsapplication.mapper.OwnerMapper.toOwnerDTO;
-import static com.example.petsapplication.mapper.PetMapper.toDog;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import static com.example.petsapplication.mapper.ResponseMapper.toGeneralResponseDTO;
+import static com.example.petsapplication.mapper.ResponseMapper.toResponseDTO;
+import static org.springframework.http.HttpStatus.CREATED;
+import static utils.CheckEntityExistence.getMapOfEntities;
 
 @Service
 @RequiredArgsConstructor
@@ -35,29 +38,33 @@ public class GeneralServiceImpl implements GeneralService {
     }
 
     @Override
-    public PostRequestDTO save(PostRequestDTO postRequestDTO) {
-        Owner savedOwner = ownerRepository.save(toOwner(postRequestDTO.getOwner()))
-                .orElseThrow(() -> new EntityNotFoundException(Owner.class));
+    public ResponseDTO save(PostRequestDTO postRequestDTO) {
+        Owner savedOwner = ownerRepository.save(postRequestDTO.getOwner());
+        Dog savedDog = dogRepository.save(postRequestDTO.getDog(), savedOwner);
+        Cat savedCat = catRepository.save(postRequestDTO.getCat(), savedOwner);
 
-        CreateDogDTO savedDog = dogRepository.save(postRequestDTO.getDog(), savedOwner)
-                .orElseThrow(() -> {
-                    ownerRepository.delete(savedOwner.getId());
-                    throw new EntityNotFoundException(Dog.class);
-                });
+        List<Object> createdEntities = new ArrayList<>();
+        for (Map.Entry<Object, HttpStatus> entry : getMapOfEntities().entrySet()) {
+            while (entry.getValue().equals(CREATED)) {
+                createdEntities.add(entry.getKey());
+            }
+        }
 
-        CreateCatDTO savedCat = catRepository.save(postRequestDTO.getCat(), savedOwner)
-                .orElseThrow(() -> {
-                    Dog dog = toDog(savedDog, savedOwner);
-                    ownerRepository.delete(savedOwner.getId());
-                    dogRepository.delete(dog.getId());
-                    throw new EntityNotFoundException(Cat.class);
-                });
+        if (createdEntities.size() != 3) {
+            delete(createdEntities);
+        }
 
-        return PostRequestDTO.builder()
-                .cat(savedCat)
-                .dog(savedDog)
-                .owner(toOwnerDTO(savedOwner))
-                .build();
+        return toResponseDTO(savedOwner, savedDog, savedCat);
+    }
+
+    private void delete(List<Object> createdEntities) {
+        for (Object createdObject : createdEntities) {
+            if (createdObject instanceof Owner) {
+                ownerRepository.delete(((Owner) createdObject).getId());
+            } else if (createdObject instanceof Dog) {
+                dogRepository.delete(((Dog) createdObject).getId());
+            }
+        }
     }
 
 }

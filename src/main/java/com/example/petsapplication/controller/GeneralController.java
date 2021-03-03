@@ -2,6 +2,7 @@ package com.example.petsapplication.controller;
 
 import com.example.petsapplication.dto.GeneralResponseDTO;
 import com.example.petsapplication.dto.PostRequestDTO;
+import com.example.petsapplication.dto.ResponseDTO;
 import com.example.petsapplication.pojo.AuthenticationInfo;
 import com.example.petsapplication.service.GeneralService;
 import lombok.RequiredArgsConstructor;
@@ -12,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,16 +26,14 @@ public class GeneralController {
     public ResponseEntity<GeneralResponseDTO> getAll(@RequestHeader("Authorization")
                                                              String authInformation) {
         authenticationInfo.setAuthenticationInfo(authInformation);
-        return ResponseEntity.status(OK)
-                .body(generalService.getAll());
+        return ResponseEntity.ok(generalService.getAll());
     }
 
     @PostMapping
-    public ResponseEntity<PostRequestDTO> save(@RequestHeader("Authorization") String authInformation,
-                                               @RequestBody PostRequestDTO postRequestDTO) {
+    public ResponseEntity<ResponseDTO> save(@RequestHeader("Authorization") String authInformation,
+                                            @RequestBody PostRequestDTO postRequestDTO) {
         authenticationInfo.setAuthenticationInfo(authInformation);
-        return ResponseEntity.status(OK)
-                .body(generalService.save(postRequestDTO));
+        return ResponseEntity.ok(generalService.save(postRequestDTO));
     }
 
 

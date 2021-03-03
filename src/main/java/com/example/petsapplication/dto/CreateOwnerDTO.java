@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostRequestDTO {
+public class CreateOwnerDTO {
 
-    private CreateOwnerDTO owner;
-    private CreateCatDTO cat;
-    private CreateDogDTO dog;
+    private String name;
 }
