@@ -5,7 +5,6 @@ import com.example.petsapplication.entity.Owner;
 import com.example.petsapplication.repository.OwnerRepository;
 import com.example.petsapplication.transactionservice.OwnerTransactionService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;

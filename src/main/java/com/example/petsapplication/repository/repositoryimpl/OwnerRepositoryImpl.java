@@ -15,14 +15,13 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 
 import static com.example.petsapplication.mapper.OwnerMapper.toOwner;
+import static com.example.petsapplication.utils.HttpHeaderUtil.setHeaderAuth;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.isNull;
 import static org.springframework.http.HttpMethod.DELETE;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
-import static com.example.petsapplication.utils.CheckEntityExistence.setMapOfEntities;
-import static com.example.petsapplication.utils.HttpHeaderUtil.setHeaderAuth;
 
 
 @Repository

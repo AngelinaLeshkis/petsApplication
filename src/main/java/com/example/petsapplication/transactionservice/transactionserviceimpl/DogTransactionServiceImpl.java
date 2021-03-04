@@ -5,15 +5,12 @@ import com.example.petsapplication.dto.DogDTO;
 import com.example.petsapplication.entity.Owner;
 import com.example.petsapplication.repository.DogRepository;
 import com.example.petsapplication.transactionservice.DogTransactionService;
-import com.example.petsapplication.transactionservice.RollbackTransactionService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 
 import static com.example.petsapplication.utils.ConstantValues.DOG_ID;
-import static com.example.petsapplication.utils.ConstantValues.OWNER_ID;
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
 import static org.springframework.web.context.request.RequestContextHolder.currentRequestAttributes;
 

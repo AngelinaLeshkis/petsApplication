@@ -11,15 +11,4 @@ import lombok.NoArgsConstructor;
 public class Dog extends Pet {
 
     private String breed;
-
-    @Builder(builderMethodName = "dogBuilder")
-    public Dog(
-            long id,
-            String name,
-            double age,
-            Owner owner,
-            String breed) {
-        super(id, name, age, owner);
-        this.breed = breed;
-    }
 }

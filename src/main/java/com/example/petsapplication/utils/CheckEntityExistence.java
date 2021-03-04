@@ -3,7 +3,6 @@ package com.example.petsapplication.utils;
 import com.example.petsapplication.transactionservice.RollbackTransactionService;
 import lombok.NoArgsConstructor;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -19,7 +18,7 @@ public final class CheckEntityExistence {
     }
 
     public static void setMapOfEntities(String value,
-                                        RollbackTransactionService transactionService){
+                                        RollbackTransactionService transactionService) {
         mapOfEntities.put(value, transactionService);
     }
 

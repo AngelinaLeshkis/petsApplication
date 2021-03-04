@@ -2,10 +2,8 @@ package com.example.petsapplication.repository.repositoryimpl;
 
 import com.example.petsapplication.dto.CatDTO;
 import com.example.petsapplication.dto.CreateCatDTO;
-import com.example.petsapplication.entity.Cat;
 import com.example.petsapplication.entity.Dog;
 import com.example.petsapplication.entity.Owner;
-import com.example.petsapplication.mapper.PetMapper;
 import com.example.petsapplication.pojo.AuthenticationInfo;
 import com.example.petsapplication.repository.CatRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,19 +14,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static com.example.petsapplication.mapper.PetMapper.toCatDto;
+import static com.example.petsapplication.utils.HttpHeaderUtil.setHeaderAuth;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.isNull;
-import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpMethod.DELETE;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
-import static com.example.petsapplication.utils.CheckEntityExistence.setMapOfEntities;
-import static com.example.petsapplication.utils.HttpHeaderUtil.setHeaderAuth;
 
 @Repository
 @RequiredArgsConstructor
@@ -49,7 +44,7 @@ public class CatRepositoryImpl implements CatRepository {
         HttpEntity<CreateCatDTO> httpEntity = new HttpEntity<>(setHeaderAuth(httpHeaders,
                 authenticationInfo.getAuthenticationInfo()));
         CatDTO[] cats = restTemplate.exchange(backendServerUrl + catsUrl, GET,
-                        httpEntity, CatDTO[].class).getBody();
+                httpEntity, CatDTO[].class).getBody();
         return isNull(cats) ? emptyList() : asList(cats);
     }
 

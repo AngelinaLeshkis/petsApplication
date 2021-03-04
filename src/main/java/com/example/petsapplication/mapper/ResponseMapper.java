@@ -5,8 +5,6 @@ import com.example.petsapplication.dto.DogDTO;
 import com.example.petsapplication.dto.GeneralResponseDTO;
 import com.example.petsapplication.dto.OwnerDTO;
 import com.example.petsapplication.dto.ResponseDTO;
-import com.example.petsapplication.entity.Cat;
-import com.example.petsapplication.entity.Dog;
 import com.example.petsapplication.entity.Owner;
 import lombok.NoArgsConstructor;
 
