@@ -1,5 +1,6 @@
 package com.example.petsapplication.controller.exceptionhandler;
 
+import com.example.petsapplication.exception.RequestErrorException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,6 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static java.time.LocalTime.now;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -69,6 +71,19 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
         return ResponseEntity
                 .status(INTERNAL_SERVER_ERROR)
+                .body(body);
+    }
+
+    @ExceptionHandler(RequestErrorException.class)
+    public ResponseEntity<Object> handleRequestErrorException(
+            InternalError ex) {
+
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", now());
+        body.put("message", ex.getMessage());
+
+        return ResponseEntity
+                .status(BAD_REQUEST)
                 .body(body);
     }
 }

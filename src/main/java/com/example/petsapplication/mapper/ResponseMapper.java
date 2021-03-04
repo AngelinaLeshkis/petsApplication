@@ -15,7 +15,8 @@ import static lombok.AccessLevel.PRIVATE;
 @NoArgsConstructor(access = PRIVATE)
 public final class ResponseMapper {
 
-    public static GeneralResponseDTO toGeneralResponseDTO(List<Owner> owners, List<CatDTO> cats,
+    public static GeneralResponseDTO toGeneralResponseDTO(List<Owner> owners,
+                                                          List<CatDTO> cats,
                                                           List<DogDTO> dogs) {
         return GeneralResponseDTO.builder()
                 .owners(owners)
