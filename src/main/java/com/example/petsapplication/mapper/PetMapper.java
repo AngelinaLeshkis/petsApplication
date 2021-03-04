@@ -52,4 +52,22 @@ public final class PetMapper {
                 .build();
     }
 
+    public static CatDTO toCatDto(CreateCatDTO catDTO, Owner owner) {
+        return CatDTO.builder()
+                .name(catDTO.getName())
+                .age(catDTO.getAge())
+                .ownerId(owner.getId())
+                .view(catDTO.getView())
+                .build();
+    }
+
+    public static DogDTO toDogDto(CreateDogDTO dogDTO, Owner owner) {
+        return DogDTO.builder()
+                .name(dogDTO.getName())
+                .age(dogDTO.getAge())
+                .ownerId(owner.getId())
+                .breed(dogDTO.getBreed())
+                .build();
+    }
+
 }

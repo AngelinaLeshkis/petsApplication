@@ -1,8 +1,11 @@
 package com.example.petsapplication.repository.repositoryimpl;
 
+import com.example.petsapplication.dto.CatDTO;
 import com.example.petsapplication.dto.CreateCatDTO;
 import com.example.petsapplication.entity.Cat;
+import com.example.petsapplication.entity.Dog;
 import com.example.petsapplication.entity.Owner;
+import com.example.petsapplication.mapper.PetMapper;
 import com.example.petsapplication.pojo.AuthenticationInfo;
 import com.example.petsapplication.repository.CatRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,13 +16,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Arrays;
 import java.util.List;
 
-import static com.example.petsapplication.mapper.PetMapper.toCat;
+import static com.example.petsapplication.mapper.PetMapper.toCatDto;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Objects.isNull;
+import static java.util.stream.Collectors.toList;
+import static org.springframework.http.HttpMethod.DELETE;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
-import static utils.CheckEntityExistence.setMapOfEntities;
-import static utils.HttpHeaderUtil.createHeaders;
+import static com.example.petsapplication.utils.CheckEntityExistence.setMapOfEntities;
+import static com.example.petsapplication.utils.HttpHeaderUtil.setHeaderAuth;
 
 @Repository
 @RequiredArgsConstructor
@@ -35,29 +44,31 @@ public class CatRepositoryImpl implements CatRepository {
     private final AuthenticationInfo authenticationInfo;
 
     @Override
-    public List<Cat> findAll() {
+    public List<CatDTO> findAll() {
         HttpHeaders httpHeaders = new HttpHeaders();
-        HttpEntity<CreateCatDTO> httpEntity = new HttpEntity<>(createHeaders(httpHeaders, authenticationInfo.getAuthenticationInfo()));
-        List<Cat> cats = restTemplate.exchange
-                (backendServerUrl + catsUrl, GET,
-                        httpEntity, List.class).getBody();
-        return cats;
+        HttpEntity<CreateCatDTO> httpEntity = new HttpEntity<>(setHeaderAuth(httpHeaders,
+                authenticationInfo.getAuthenticationInfo()));
+        CatDTO[] cats = restTemplate.exchange(backendServerUrl + catsUrl, GET,
+                        httpEntity, CatDTO[].class).getBody();
+        return isNull(cats) ? emptyList() : asList(cats);
     }
 
     @Override
-    public Cat save(CreateCatDTO catDTO, Owner owner) {
+    public CatDTO save(CreateCatDTO catDTO, Owner owner) {
         HttpHeaders httpHeaders = new HttpHeaders();
-        HttpEntity<CreateCatDTO> httpEntity = new HttpEntity<>(catDTO, createHeaders(httpHeaders, authenticationInfo.getAuthenticationInfo()));
-        catDTO.setOwnerId(owner.getId());
-        ResponseEntity<CreateCatDTO> savedCat = restTemplate.exchange(backendServerUrl + catsUrl, POST,
-                httpEntity, CreateCatDTO.class);
-        setMapOfEntities(savedCat.getBody(), savedCat.getStatusCode());
-        return toCat(savedCat.getBody(), owner);
+        HttpEntity<CatDTO> httpEntity = new HttpEntity<>(toCatDto(catDTO, owner),
+                setHeaderAuth(httpHeaders, authenticationInfo.getAuthenticationInfo()));
+        ResponseEntity<CatDTO> savedCat = restTemplate.exchange(backendServerUrl + catsUrl, POST,
+                httpEntity, CatDTO.class);
+        return savedCat.getBody();
     }
 
     @Override
     public void delete(long id) {
-//        restTemplate.exchange(backendServerUrl + petsUrl + "/" + id, DELETE,
-//                new HttpEntity<>(httpHeadersService.createHeaders()), Owner.class);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        HttpEntity<Dog> httpEntity = new HttpEntity<>(setHeaderAuth(httpHeaders,
+                authenticationInfo.getAuthenticationInfo()));
+        restTemplate.exchange(backendServerUrl + petsUrl + "/" + id, DELETE,
+                httpEntity, String.class);
     }
 }

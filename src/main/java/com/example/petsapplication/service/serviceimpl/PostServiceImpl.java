@@ -2,15 +2,11 @@ package com.example.petsapplication.service.serviceimpl;
 
 import com.example.petsapplication.dto.CatDTO;
 import com.example.petsapplication.dto.DogDTO;
-import com.example.petsapplication.dto.GeneralResponseDTO;
 import com.example.petsapplication.dto.PostRequestDTO;
 import com.example.petsapplication.dto.ResponseDTO;
 import com.example.petsapplication.entity.Owner;
 import com.example.petsapplication.exception.RequestErrorException;
-import com.example.petsapplication.repository.CatRepository;
-import com.example.petsapplication.repository.DogRepository;
-import com.example.petsapplication.repository.OwnerRepository;
-import com.example.petsapplication.service.GeneralService;
+import com.example.petsapplication.service.PostService;
 import com.example.petsapplication.transactionservice.CatTransactionService;
 import com.example.petsapplication.transactionservice.DogTransactionService;
 import com.example.petsapplication.transactionservice.OwnerTransactionService;
@@ -21,7 +17,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 
 import static com.example.petsapplication.mapper.OwnerMapper.toOwnerDTO;
-import static com.example.petsapplication.mapper.ResponseMapper.toGeneralResponseDTO;
 import static com.example.petsapplication.mapper.ResponseMapper.toResponseDTO;
 import static com.example.petsapplication.utils.CheckEntityExistence.getMapOfEntities;
 import static com.example.petsapplication.utils.CheckEntityExistence.setMapOfEntities;
@@ -31,17 +26,25 @@ import static com.example.petsapplication.utils.ConstantValues.OWNER_TRANSACTION
 
 @Service
 @RequiredArgsConstructor
-public class GeneralServiceImpl implements GeneralService {
+public class PostServiceImpl implements PostService {
 
-    private final OwnerRepository ownerRepository;
-    private final DogRepository dogRepository;
-    private final CatRepository catRepository;
-
+    private final CatTransactionService catTransactionService;
+    private final DogTransactionService dogTransactionService;
+    private final OwnerTransactionService ownerTransactionService;
 
     @Override
-    public GeneralResponseDTO getAll() {
-        return toGeneralResponseDTO(ownerRepository.findAll(),
-                catRepository.findAll(), dogRepository.findAll());
+    public ResponseDTO save(PostRequestDTO postRequestDTO) {
+        try {
+            Owner savedOwner = ownerTransactionService.save(postRequestDTO.getOwner());
+            setMapOfEntities(OWNER_TRANSACTION, ownerTransactionService);
+            DogDTO savedDog = dogTransactionService.save(postRequestDTO.getDog(), savedOwner);
+            setMapOfEntities(CAT_TRANSACTION, dogTransactionService);
+            CatDTO savedCat = catTransactionService.save(postRequestDTO.getCat(), savedOwner);
+            setMapOfEntities(DOG_TRANSACTION, catTransactionService);
+            return toResponseDTO(toOwnerDTO(savedOwner), savedDog, savedCat);
+        } catch (HttpClientErrorException | HttpServerErrorException errorException) {
+            getMapOfEntities().values().forEach(RollbackTransactionService::rollback);
+            throw new RequestErrorException();
+        }
     }
-
 }

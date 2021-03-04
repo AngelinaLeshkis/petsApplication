@@ -14,12 +14,10 @@ public class Owner {
 
     private String name;
 
-    private List<Pet> pets;
 
     @Builder(builderMethodName = "ownerBuilder")
-    public Owner(long id, String name, List<Pet> pets) {
+    public Owner(long id, String name) {
         this.id = id;
         this.name = name;
-        this.pets = pets;
     }
 }

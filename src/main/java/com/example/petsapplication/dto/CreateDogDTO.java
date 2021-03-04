@@ -13,6 +13,5 @@ public class CreateDogDTO {
 
     private String name;
     private double age;
-    private long ownerId;
     private String breed;
 }

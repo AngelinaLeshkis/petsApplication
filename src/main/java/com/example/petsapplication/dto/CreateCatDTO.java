@@ -13,6 +13,5 @@ public class CreateCatDTO {
 
     private String name;
     private double age;
-    private long ownerId;
     private String view;
 }

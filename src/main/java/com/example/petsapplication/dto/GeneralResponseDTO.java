@@ -17,7 +17,7 @@ import java.util.List;
 public class GeneralResponseDTO {
 
     private List<Owner> owners;
-    private List<Cat> cats;
-    private List<Dog> dogs;
+    private List<CatDTO> cats;
+    private List<DogDTO> dogs;
 
 }
