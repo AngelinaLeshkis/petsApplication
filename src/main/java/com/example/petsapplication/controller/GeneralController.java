@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.annotation.RequestScope;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,7 +25,6 @@ public class GeneralController {
     private final AuthenticationInfo authenticationInfo;
 
     @GetMapping
-    @RequestScope
     public ResponseEntity<GeneralResponseDTO> getAll(@RequestHeader("Authorization")
                                                              String authInformation) {
         authenticationInfo.setAuthenticationInfo(authInformation);
@@ -34,7 +32,6 @@ public class GeneralController {
     }
 
     @PostMapping
-    @RequestScope
     public ResponseEntity<ResponseDTO> save(@RequestHeader("Authorization") String authInformation,
                                             @RequestBody PostRequestDTO postRequestDTO) {
         authenticationInfo.setAuthenticationInfo(authInformation);
